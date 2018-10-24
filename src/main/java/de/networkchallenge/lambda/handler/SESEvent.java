@@ -1,5 +1,6 @@
 package de.networkchallenge.lambda.handler;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * Represents an Amazon SES event.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SESEvent implements Serializable {
 
     /**
