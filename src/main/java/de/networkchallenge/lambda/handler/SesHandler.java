@@ -67,11 +67,11 @@ public class SesHandler implements RequestStreamHandler {
             markers.add(new Location(Double.parseDouble(lat), Double.parseDouble(lng), ""));
             s3.putObject(WEB_BUCKET_NAME, "json-tracker.log", gson.toJson(markers));
             try {
-                String text = new String("markers = " + gson.toJson(markers) + ";";
+                String text = new String("markers = " + gson.toJson(markers) + ";");
                 ObjectMetadata metadata = new ObjectMetadata();
                 metadata.setContentType("text/javascript");
                 metadata.setContentLength(text.length());
-                PutObjectRequest putObjectRequest = new PutObjectRequest(WEB_BUCKET_NAME, MARKERS_FILE, new ByteArrayInputStream(text).getBytes("utf-8")), metadata);
+                PutObjectRequest putObjectRequest = new PutObjectRequest(WEB_BUCKET_NAME, MARKERS_FILE, new ByteArrayInputStream(text.getBytes("utf-8")), metadata);
                 AccessControlList acl = new AccessControlList();
                 acl.grantPermission(GroupGrantee.AllUsers, Permission.Read); //all users or authenticated
                 putObjectRequest.setAccessControlList(acl);
