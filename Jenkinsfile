@@ -50,8 +50,11 @@ pipeline {
             steps {
                 s3Upload consoleLogLevel: 'INFO', dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'nc-infra-cfn-jenkins-artifacts', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: true, noUploadOnFailure: true, selectedRegion: 'eu-central-1', showDirectlyInBrowser: false, sourceFile: '**/target/*.jar', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'ARTIFACTS', userMetadata: []
                 sh '''
-                    chmod +x execute_deploy.sh
-                    ./execute_deploy.sh
+                    cd cfn
+                    chmod +x prepare_template.sh
+                    #./prepare_template.sh
+                    aws cloudformation package --template aws-resources.yml --s3-bucket $S3_BUCKET --s3-prefix inreach-mail-tracker --output-template template-export.yml
+                    aws cloudformation deploy  --template-file=template-export.yml --stack-name="${STACK_NAME}" --parameter-overrides S3MarkersFile=markers.js --capabilities=CAPABILITY_NAMED_IAM
                     '''
             }
         }
