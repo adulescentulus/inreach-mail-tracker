@@ -97,24 +97,24 @@ Resources:
                 - "/*"
   SESACMForwarderLambda:
     Type: AWS::Serverless::Function
-      Properties:
-        CodeUri: ../target/lambda.jar
-        Handler: de.networkchallenge.handler.SesHandler::handleRequest
-        Runtime: java8
-        MemorySize: 256
-        Timeout: 30
-        Role:
-          Fn::GetAtt:
-          - LambdaSESACMForwarderRole
-          - Arn
-        Environment:
-          Variables:
-            SesBucketName:
-              Ref: SesBucket
-            WebBucketName:
-              Ref: WebBucket
-            MarkersFile:
-              Ref: S3MarkersFile
+    Properties:
+      CodeUri: ../target/lambda.jar
+      Handler: de.networkchallenge.handler.SesHandler::handleRequest
+      Runtime: java8
+      MemorySize: 256
+      Timeout: 30
+      Role:
+        Fn::GetAtt:
+        - LambdaSESACMForwarderRole
+        - Arn
+      Environment:
+        Variables:
+          SesBucketName:
+            Ref: SesBucket
+          WebBucketName:
+            Ref: WebBucket
+          MarkersFile:
+            Ref: S3MarkersFile
 
 Outputs:
   SesBucketName:
