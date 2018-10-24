@@ -68,7 +68,7 @@ public class SesHandler implements RequestStreamHandler {
             }
             markers.add(new Location(Double.parseDouble(lat), Double.parseDouble(lng), ""));
             s3.putObject(WEB_BUCKET_NAME, "json-tracker.log", gson.toJson(markers));
-            s3.putObject(WEB_BUCKET_NAME, MARKERS_FILE, "markers = ["+gson.toJson(markers)+"];");
+            s3.putObject(WEB_BUCKET_NAME, MARKERS_FILE, "markers = "+gson.toJson(markers)+";");
         }
         else c.getLogger().log("nothing found");
         return "CONTINUE";
