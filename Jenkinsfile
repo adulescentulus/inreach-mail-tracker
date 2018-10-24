@@ -41,7 +41,7 @@ pipeline {
                 }
             }
             environment {
-                AWS_DEFAULT_REGION = 'eu-central-1'
+                AWS_DEFAULT_REGION = 'eu-west-1'
                 AWS_ACCESS_KEY_ID = credentials('AWS_KEY_E2C_ID')
                 AWS_SECRET_ACCESS_KEY = credentials('AWS_KEY_E2C_SECRET')
                 STACK_NAME = 'Inreach-Mail-Tracker'
