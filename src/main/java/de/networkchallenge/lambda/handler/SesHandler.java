@@ -4,9 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -68,7 +66,16 @@ public class SesHandler implements RequestStreamHandler {
             }
             markers.add(new Location(Double.parseDouble(lat), Double.parseDouble(lng), ""));
             s3.putObject(WEB_BUCKET_NAME, "json-tracker.log", gson.toJson(markers));
-            s3.putObject(WEB_BUCKET_NAME, MARKERS_FILE, "markers = "+gson.toJson(markers)+";");
+            try {
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentType("text/javascript");
+                PutObjectRequest putObjectRequest = new PutObjectRequest(WEB_BUCKET_NAME, MARKERS_FILE, new ByteArrayInputStream(new String("markers = " + gson.toJson(markers) + ";").getBytes("utf-8")), metadata);
+                putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+                s3.putObject(putObjectRequest);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            //PutObjectResult markersObj = s3.putObject(WEB_BUCKET_NAME, MARKERS_FILE, "markers = " + gson.toJson(markers) + ";");
         }
         else c.getLogger().log("nothing found");
         return "CONTINUE";
