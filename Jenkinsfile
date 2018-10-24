@@ -3,6 +3,13 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '15'))
     }
+    parameters {
+        string(
+            defaultValue: 'markers.js',
+            description: 'where to save the markers',
+            name: 'S3MARKERSFILE'
+           )
+    }
     environment {
         WHOAMI = sh(returnStdout: true, script: 'echo -n `id -u`:`id -g`')
     }
@@ -46,6 +53,7 @@ pipeline {
                 AWS_SECRET_ACCESS_KEY = credentials('AWS_KEY_E2C_SECRET')
                 STACK_NAME = 'Inreach-Mail-Tracker'
                 S3_BUCKET = 'cf-templates-124rppthtx427-eu-west-1'
+                S3_MARKERS = params.S3MARKERSFILE
             }
             steps {
                 s3Upload consoleLogLevel: 'INFO', dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'nc-infra-cfn-jenkins-artifacts', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: true, noUploadOnFailure: true, selectedRegion: 'eu-central-1', showDirectlyInBrowser: false, sourceFile: '**/target/*.jar', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'ARTIFACTS', userMetadata: []
@@ -54,7 +62,7 @@ pipeline {
                     chmod +x prepare_template.sh
                     #./prepare_template.sh
                     aws cloudformation package --template aws-resources.yml --s3-bucket $S3_BUCKET --s3-prefix inreach-mail-tracker --output-template template-export.yml
-                    aws cloudformation deploy  --template-file=template-export.yml --stack-name="${STACK_NAME}" --parameter-overrides S3MarkersFile=markers.js --capabilities=CAPABILITY_NAMED_IAM
+                    aws cloudformation deploy  --template-file=template-export.yml --stack-name="${STACK_NAME}" --parameter-overrides S3MarkersFile=$S3_MARKERS --capabilities=CAPABILITY_NAMED_IAM
                     '''
             }
         }
