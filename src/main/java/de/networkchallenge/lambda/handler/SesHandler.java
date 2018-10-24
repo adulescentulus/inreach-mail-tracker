@@ -5,11 +5,17 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -49,6 +55,17 @@ public class SesHandler implements RequestStreamHandler {
             String lat = matcher.group(1);
             String lng = matcher.group(2);
             c.getLogger().log("found Lat " + lat + " Long "+ lng);
+
+            ArrayList<Location> markers;
+            Gson gson = new Gson();
+            if (s3.doesObjectExist(WEB_BUCKET_NAME, "json-tracker.log")) {
+                markers = gson.fromJson(s3.getObjectAsString(WEB_BUCKET_NAME, "json-tracker.log"), new TypeToken<ArrayList<Location>>(){}.getType());
+            }
+            else {
+                markers = new ArrayList<Location>();
+            }
+            markers.add(new Location(Double.parseDouble(lat), Double.parseDouble(lng), ""));
+            s3.putObject(WEB_BUCKET_NAME, "json-tracker.log", gson.toJson(markers));
         }
         else c.getLogger().log("nothing found");
         return "CONTINUE";
@@ -58,6 +75,19 @@ public class SesHandler implements RequestStreamHandler {
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset))) {
             return br.lines().collect(Collectors.joining(System.lineSeparator()));
+        }
+    }
+
+    class Location {
+        private double lat;
+        private double lng;
+        private String text;
+
+        public Location(double lat, double lng, String text){
+
+            this.lat = lat;
+            this.lng = lng;
+            this.text = text;
         }
     }
 }

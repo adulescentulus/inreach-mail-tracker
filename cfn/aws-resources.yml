@@ -18,7 +18,7 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties:
-      BucketName: networkchallenge-tracker
+      BucketName: nc-tracker
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
