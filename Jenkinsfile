@@ -45,7 +45,7 @@ pipeline {
                 AWS_ACCESS_KEY_ID = credentials('AWS_KEY_E2C_ID')
                 AWS_SECRET_ACCESS_KEY = credentials('AWS_KEY_E2C_SECRET')
                 STACK_NAME = 'Inreach-Mail-Tracker'
-                S3_BUCKET = 'nc-projects-infrabucket'
+                S3_BUCKET = 'cf-templates-124rppthtx427-eu-west-1'
             }
             steps {
                 s3Upload consoleLogLevel: 'INFO', dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'nc-infra-cfn-jenkins-artifacts', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: true, noUploadOnFailure: true, selectedRegion: 'eu-central-1', showDirectlyInBrowser: false, sourceFile: '**/target/*.jar', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'ARTIFACTS', userMetadata: []
